@@ -164,6 +164,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # 指定自定义的用户模型类
 AUTH_USER_MODEL = 'users.User'
 
+# 继续测试
+
 # 配置工程日志
 LOGGING = {
     'version': 1,
