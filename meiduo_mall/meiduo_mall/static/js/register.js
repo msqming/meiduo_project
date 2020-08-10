@@ -8,6 +8,8 @@ let vm = new Vue({
         password2: '',
         mobile: '',
         allow: '',
+        image_code_url: '',
+        uuid: '',
 
         // v-show
         error_name: false,
@@ -20,7 +22,16 @@ let vm = new Vue({
         error_name_message: '',
         error_mobile_message: '',
     },
+    mounted() {
+        // 生成图形验证码
+        this.generate_image_code();
+    },
     method: {  // 定义和实现事件的方法
+        // 生成图形验证码
+        generate_image_code() {
+            this.uuid = generateUUID();
+            this.image_code_url = '/image_code/'+ this.uuid +'/';
+        },
         check_username() {  // 校验用户名
             let re = /^[a-zA-Z0-9_-]{5,20}$/;  // 正则表达式匹配用户名
 			if (re.test(this.username)) {
@@ -29,6 +40,21 @@ let vm = new Vue({
 				this.error_name_message = '请输入5-20个字符的用户名';
 				this.error_name = true;
 			}
+			// 判断用户名是否重复注册
+            if (this.error_name == false) {
+                let url = '/usernames/'+ this.username +'/count/';
+                axios.get(url, {
+                    responseType: 'json',
+                }).then(response => {
+                    if (response.data.count == 1){
+                        this.error_name_message = '用户名已存在';
+                    } else {
+                        this.error_name = false;
+                    }
+                }).catch(error => {
+                    console.log(error.response)
+                })
+            }
         },
         check_password() {  // 校验密码
             let re = /^[0-9A-Za-z]{8,20}$/;
